@@ -1,4 +1,5 @@
 ﻿using ConsultaCertidaoCliente.Data;
+using ConsultaCertidaoCliente.Modelos;
 
 namespace ConsultaCertidaoCliente
 {
@@ -9,7 +10,7 @@ namespace ConsultaCertidaoCliente
         static void Main(string[] args)
         {
             //dal.CriarTabelas();
-            
+
             while (true)
             {
                 Console.Clear();
@@ -74,10 +75,13 @@ namespace ConsultaCertidaoCliente
                     switch (opcao)
                     {
                         case 1:
+
                             dal.InserirCliente();
                             Console.ReadLine();
+
                             break;
                         case 2:
+
                             dal.AtualizarDadosCliente();
                             Console.ReadLine();
                             break;

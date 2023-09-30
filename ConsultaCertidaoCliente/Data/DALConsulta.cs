@@ -1,4 +1,5 @@
-﻿using ConsultaCertidaoCliente.Utilitarios;
+﻿using ConsultaCertidaoCliente.Modelos;
+using ConsultaCertidaoCliente.Utilitarios;
 using System;
 using System.Data;
 using System.Data.SQLite;
@@ -54,6 +55,7 @@ namespace ConsultaCertidaoCliente.Data
                 Console.WriteLine("Erro geral: " + ex.Message);
             }
         }
+
 
         // metodos cliente (INSERIR, ALTERAR, PESQUISAR E EXCLUIR)
         public void InserirCliente()

@@ -9,7 +9,7 @@ namespace ConsultaCertidaoCliente.Modelos
     internal class Cliente
     {
         public int Id { get; set; }
-        public string NomeCliente { get; set; }
+        public string Nome { get; set; }
         public string CnpjCpf { get; set; }
     }
 }

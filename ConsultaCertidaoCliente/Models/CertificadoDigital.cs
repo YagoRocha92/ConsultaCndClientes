@@ -8,5 +8,8 @@ namespace ConsultaCertidaoCliente.Modelos
 {
     internal class CertificadoDigital
     {
+        public int Id { get; set; }
+        public DateTime DataValidade { get; set; }
+        public string Tipo { get; set; }
     }
 }
