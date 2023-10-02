@@ -2,6 +2,7 @@
 using System.Data;
 
 
+
 namespace ConsultaCertidaoCliente.Utilitarios
 {
     public static class DbHelper

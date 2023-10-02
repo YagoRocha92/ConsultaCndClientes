@@ -6,6 +6,9 @@ namespace ConsultaCertidaoCliente
     internal class Program
     {
         private static DALConsulta dal = new DALConsulta();
+        private static DalCliente dalCliente = new DalCliente();
+        private static DalCertificado dalCertificado = new DalCertificado();
+        private static DalCertidao dalCertidao = new DalCertidao();
 
         static void Main(string[] args)
         {
@@ -76,37 +79,24 @@ namespace ConsultaCertidaoCliente
                     {
                         case 1:
 
-                            dal.InserirCliente();
+                            InserirCliente();
                             Console.ReadLine();
-
                             break;
                         case 2:
-
-                            dal.AtualizarDadosCliente();
+                            AtualizarDadosCliente();
                             Console.ReadLine();
                             break;
                         case 3:
-                            dal.ListarTodosClientes();
+                            ListarTodosClientes();
                             Console.ReadLine();
                             break;
                         case 4:
-                            Console.WriteLine("Digite o nome ou CNPJ/CPF para pesquisa:");
-                            string termoPesquisa = Console.ReadLine();
-                            dal.PesquisarClientesPorNomeOuCnpjCpf(termoPesquisa);
+                            PesquisarClientesPorNomeOuCnpjCpf();
                             Console.ReadLine();
                             break;
                         case 5:
-                            Console.WriteLine("Digite o ID do cliente que deseja excluir:");
-                            if (int.TryParse(Console.ReadLine(), out int clienteIdExclusao))
-                            {
-                                dal.ExcluirCliente(clienteIdExclusao);
-                                Console.ReadLine();
-                            }
-                            else
-                            {
-                                Console.WriteLine("ID de cliente inválido. Pressione Enter para continuar.");
-                                Console.ReadLine();
-                            }
+                            ExcluirClienteId();
+                            Console.ReadLine();
                             break;
                         case 6:
                             return;
@@ -122,7 +112,105 @@ namespace ConsultaCertidaoCliente
                     Console.ReadLine();
                 }
             }
-        }
+        }// ok
+        static void InserirCliente()
+        {
+            Console.WriteLine("Digite o nome do cliente: ");
+            string nome = Console.ReadLine();
+            Console.WriteLine("Digite o CNPJ/CPF do cliente: ");
+            string cnpjCpf = Console.ReadLine();
+
+            Cliente novoCliente = new Cliente
+            {
+                Nome = nome,
+                CnpjCpf = cnpjCpf
+            };
+            dalCliente.InserirCliente(novoCliente);
+
+
+        } // OK
+        static void ListarTodosClientes()
+        {
+            List<Cliente> clientes = dalCliente.ListarTodosClientes();
+            Console.WriteLine("Lista de Clientes:");
+            foreach (var cliente in clientes)
+            {
+                Console.WriteLine($"ID: {cliente.Id}, Nome: {cliente.Nome}, CNPJ/CPF: {cliente.CnpjCpf}");
+            }
+        }// OK
+        static void AtualizarDadosCliente()
+        {
+            try
+            {
+                Console.WriteLine("Digite o ID do cliente que deseja atualizar:");
+                if (int.TryParse(Console.ReadLine(), out int clienteId))
+                {
+                    Cliente cliente = dalCliente.ObterClientePorId(clienteId);
+                    if (cliente != null)
+                    {
+                        Console.WriteLine("Digite o novo nome do cliente:");
+                        string novoNome = Console.ReadLine();
+                        Console.WriteLine("Digite o novo CNPJ/CPF do cliente:");
+                        string novoCnpjCpf = Console.ReadLine();
+
+                        cliente.Nome = novoNome;
+                        cliente.CnpjCpf = novoCnpjCpf;
+
+                        dalCliente.AtualizarCliente(cliente);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Cliente não encontrado.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("ID de cliente inválido.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erro ao atualizar dados do cliente: " + ex.Message);
+            }
+        } // OK
+        static void PesquisarClientesPorNomeOuCnpjCpf()
+        {
+            Console.WriteLine("Digite o nome ou CNPJ/CPF para pesquisa:");
+            string termoPesquisa = Console.ReadLine();
+            List<Cliente> clientes = dalCliente.PesquisarClientesPorNomeOuCnpjCpf(termoPesquisa);
+
+            if (clientes.Count > 0)
+            {
+                Console.WriteLine("Resultados da Pesquisa:");
+
+                // Use um foreach para percorrer e exibir cada cliente
+                foreach (Cliente cliente in clientes)
+                {
+                    Console.WriteLine($"ID: {cliente.Id}, Nome: {cliente.Nome}, CNPJ/CPF: {cliente.CnpjCpf}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Nenhum cliente encontrado com base no critério de pesquisa.");
+            }
+
+
+        } // OK
+        static void ExcluirClienteId()
+        {
+            Console.WriteLine("Digite o ID do cliente que deseja excluir:");
+
+            if (int.TryParse(Console.ReadLine(), out int clienteIdExclusao))
+            {
+                dalCliente.ExcluirCliente(clienteIdExclusao);
+            }
+            else
+            {
+                Console.WriteLine("Tipo de Id invalido, tente novamente");
+            }
+
+        }// OK
+
 
         static void MenuCertidoes()
         {
@@ -143,52 +231,24 @@ namespace ConsultaCertidaoCliente
                     switch (opcao)
                     {
                         case 1:
-                            dal.InserirCertidao();
+                            InserirCertidao();
                             Console.ReadLine();
                             break;
                         case 2:
-                            Console.WriteLine("Digite o ID do cliente que deseja atualizar a certidão:");
-                            if (int.TryParse(Console.ReadLine(), out int clienteId))
-                            {
-                                dal.AtualizarDadosCertidao(clienteId);
-                                Console.ReadLine();
-                            }
-                            else
-                            {
-                                Console.WriteLine("ID de certidão inválido. Pressione Enter para continuar.");
-                                Console.ReadLine();
-                            }
+                            AtualizarDadosCertidao();
+                            Console.ReadLine();
                             break;
                         case 3:
-                            dal.ListarTodasCertidoesPorOrdemDeValidade();
+                            ListarTodasCertidoesPorOrdemDeValidade();
                             Console.ReadLine();
                             break;
                         case 4:
-                            Console.WriteLine("Digite o ID do cliente para listar suas certidões:");
-                            if (int.TryParse(Console.ReadLine(), out int clienteIdCertidoes))
-                            {
-                                dal.ListarCertidoesPorCliente(clienteIdCertidoes);
-                                Console.ReadLine();
-                            }
-                            else
-                            {
-                                Console.WriteLine("ID de cliente inválido. Pressione Enter para continuar.");
-                                Console.ReadLine();
-                            }
+                            ListarCertidoesPorCliente();
                             break;
 
                         case 5:
-                            Console.WriteLine("Digite o ID da certidão que deseja excluir:");
-                            if (int.TryParse(Console.ReadLine(), out int certidaoIdExclusao))
-                            {
-                                dal.ExcluirCertidao(certidaoIdExclusao);
-                                Console.ReadLine();
-                            }
-                            else
-                            {
-                                Console.WriteLine("ID de certidão inválido. Pressione Enter para continuar.");
-                                Console.ReadLine();
-                            }
+                            ExcluirCertidao();
+                            Console.ReadLine();
                             break;
                         case 6:
                             return;
@@ -204,8 +264,117 @@ namespace ConsultaCertidaoCliente
                     Console.ReadLine();
                 }
             }
-        }
+        } //OK
+        static void InserirCertidao()
+        {
+            Console.WriteLine("Digite o Id do cliente que deseja inserir a Certidão:");
+            int clienteId = int.Parse(Console.ReadLine());
 
+            Console.WriteLine("Digite o tipo da certidão:");
+            string tipoCertidao = Console.ReadLine();
+
+            Console.WriteLine("Digite a data de validade da certidão (dd/mm/yyyy):");
+            if (DateTime.TryParseExact(Console.ReadLine(), "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out DateTime dataValidadeCertidao))
+            {
+                Certidao certidao = new Certidao
+                {
+                    ClienteId = clienteId,
+                    TipoCertidao = tipoCertidao,
+                    DataValidade = dataValidadeCertidao
+                };
+                dalCertidao.InserirCertidao(certidao);
+            }
+
+            else
+            {
+                Console.WriteLine("Data inválida. A certidão não será adicionada.");
+            }
+        }// OK
+        static void ListarTodasCertidoesPorOrdemDeValidade()
+        {
+            {
+                List<Certidao> certidoes = dalCertidao.ListarTodasCertidoesPorOrdemDeValidade();
+                Console.WriteLine("Lista de Certidoes:");
+                foreach (var certidao in certidoes)
+                {
+                    Console.WriteLine($"Nome: {certidao.NomeCliente}, TIPO: {certidao.TipoCertidao}, VENCIMENTO: {certidao.DataValidade}");
+                }
+            }// OK
+        }//OK
+        static void ListarCertidoesPorCliente()
+        {
+            Console.WriteLine("Digite o ID do cliente para listar suas certidões:");
+            if (int.TryParse(Console.ReadLine(), out int clienteIdCertidoes))
+            {
+                List<Certidao> certidoes = dalCertidao.ListarCertidoesPorCliente(clienteIdCertidoes);
+                Console.WriteLine("Lista de Certidoes:");
+                foreach (var certidao in certidoes)
+                {
+                    Console.WriteLine($"ID Certidão: {certidao.Id}, TIPO: {certidao.TipoCertidao}, VENCIMENTO: {certidao.DataValidade}");
+                }
+                Console.ReadLine();
+            }
+            else
+            {
+                Console.WriteLine("ID de cliente inválido. Pressione Enter para continuar.");
+                Console.ReadLine();
+            }
+
+        } // OK
+        static void ExcluirCertidao()
+        {
+            Console.WriteLine("Digite o ID da certidão que deseja excluir:");
+            if (int.TryParse(Console.ReadLine(), out int certidaoIdExclusao))
+            {
+                dalCertidao.ExcluirCertidao(certidaoIdExclusao);
+                Console.ReadLine();
+            }
+            else
+            {
+                Console.WriteLine("ID de certidão inválido. Pressione Enter para continuar.");
+                Console.ReadLine();
+            }
+
+        } // OK
+        static void AtualizarDadosCertidao()
+        {
+            Console.WriteLine("Digite o Id do cliente que deseja atualizar a certidão: ");
+            int clienteId = int.Parse(Console.ReadLine());
+            dalCertidao.AtualizarDadosCertidao(clienteId);
+
+        }// OK
+        ////static void AtualizarCertidaoPorId(int certidaoId)
+        //{
+        //    Certidao certidao = dalCertidao.ObterCertidaoPorId(certidaoId);
+
+        //    if (certidao == null)
+        //    {
+        //        Console.WriteLine("Certidão não encontrada. Operação de atualização cancelada.");
+        //        return;
+        //    }
+
+        //    Console.WriteLine($"Dados atuais da Certidão (ID: {certidao.Id}):");
+        //    Console.WriteLine($"Tipo: {certidao.TipoCertidao}");
+        //    Console.WriteLine($"Data de Validade: {certidao.DataValidade:dd/MM/yyyy}");
+
+        //    Console.WriteLine("Digite o novo tipo da certidão:");
+        //    string novoTipo = Console.ReadLine();
+
+        //    Console.WriteLine("Digite a nova data de validade da certidão (dd/mm/yyyy):");
+        //    if (DateTime.TryParseExact(Console.ReadLine(), "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out DateTime novaDataValidade))
+        //    {
+        //        certidao.TipoCertidao = novoTipo;
+        //        certidao.DataValidade = novaDataValidade;
+        //        dalCertidao.AtualizarCertidao(certidao);
+        //        Console.WriteLine("Dados da certidão atualizados com sucesso.");
+        //    }
+        //    else
+        //    {
+        //        Console.WriteLine("Data inválida. Nenhuma certidão foi atualizada.");
+        //    }
+        //} //OK
+
+        // FAZER MELHORIAS... 
         static void MenuProcuracoesEletronicas()
         {
             while (true)
